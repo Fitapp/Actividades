@@ -8,17 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-
-import com.google.firebase.auth.FirebaseAuth;
-
 import static com.example.valen.fitapp.R.layout.activity_main;
 
 public class MainActivity extends AppCompatActivity {
-    Button loginbutton,registerbutton;
+    private Button loginbutton,registerbutton;
     ProgressBar progressbutton;
-    private FirebaseAuth mAuth;
-
-
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -30,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
         registerbutton =  findViewById(R.id.register_button);
         progressbutton =  findViewById(R.id.login_progress);
         progressbutton.setVisibility(View.INVISIBLE);
-
-        mAuth = FirebaseAuth.getInstance();
 
         registerbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-public void openactivity_registo(){
-    Intent intent = new Intent(this, Registo.class);
-    startActivity(intent);
+    public void openactivity_registo(){
+        Intent intent = new Intent(this, Registo.class);
+        startActivity(intent);
 
-}
+    }
 
 
 
