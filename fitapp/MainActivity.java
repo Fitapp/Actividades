@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import static com.example.valen.fitapp.R.layout.activity_main;
 
 public class MainActivity extends AppCompatActivity {
     private Button loginbutton,registerbutton;
+    private TextView esqueceupassword;
     ProgressBar progressbutton;
 
     @SuppressLint("WrongViewCast")
@@ -24,11 +26,13 @@ public class MainActivity extends AppCompatActivity {
         registerbutton =  findViewById(R.id.register_button);
         progressbutton =  findViewById(R.id.login_progress);
         progressbutton.setVisibility(View.INVISIBLE);
+        esqueceupassword = (TextView) findViewById(R.id.esqueceu_password_text);
+       // esqueceupassword.setVisibility(View.INVISIBLE);
 
         registerbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openactivity_registo();
+                startActivity(new Intent(MainActivity.this, Registo.class));
             }
         });
 
@@ -40,14 +44,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        esqueceupassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, EsqueceuPassword.class));
+                            }
+        });
+
     }
-
-    public void openactivity_registo(){
-        Intent intent = new Intent(this, Registo.class);
-        startActivity(intent);
-
-    }
-
 
 
 }
