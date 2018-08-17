@@ -2,17 +2,17 @@ package com.example.valen.fitapp;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.valen.fitapp.app.EsqueceuPassword;
 import com.example.valen.fitapp.app.ProfileActivity;
@@ -159,13 +159,12 @@ public class MainActivity extends AppCompatActivity {
             {
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(getApplicationContext(), "Login executado com sucesso" , Toast.LENGTH_SHORT).show();
-                    finish();
-                    Intent i = new Intent(getApplicationContext() , ProfileActivity.class);
-                    startActivity(i);
+                   // Toast.makeText(getApplicationContext(), "Login executado com sucesso" , Toast.LENGTH_SHORT).show();
+                   // finish();
+                    CheckMaildeVerificacao();
                 }
                 else
-                    Toast.makeText(getApplicationContext(), "Não conseguiu fazer log in" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Não conseguiu fazer login" , Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -228,7 +227,16 @@ public class MainActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode , resultCode ,data);
         super.onActivityResult(requestCode, resultCode, data);
     }
+    public void CheckMaildeVerificacao(){
+        FirebaseUser firebaseUser = auth.getInstance().getCurrentUser();
+        Boolean emailflag = firebaseUser.isEmailVerified();
 
-
-
+        if(emailflag) {
+            finish();
+            startActivity(new Intent(MainActivity.this,ProfileActivity.class ));
+        }else{
+            Toast.makeText(this, "Verifique o Email!", Toast.LENGTH_SHORT).show();
+            auth.signOut();
+        }
+    }
 }

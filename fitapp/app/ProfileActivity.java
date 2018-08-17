@@ -25,6 +25,12 @@ public class ProfileActivity extends AppCompatActivity {
         user = auth.getCurrentUser();
     }
 
+    public void open_perfil(View v)
+    {
+        Intent i = new Intent(this , AcedePerfil.class);
+        startActivity(i);
+    }
+
     public void signout (View v)
     {
         auth.signOut();
