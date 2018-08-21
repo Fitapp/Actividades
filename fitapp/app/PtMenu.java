@@ -10,34 +10,26 @@ import com.example.valen.fitapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ProfileActivity extends AppCompatActivity {
 
-   private FirebaseAuth auth;
-   private FirebaseUser user;
+public class PtMenu extends AppCompatActivity {
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_pt_menu);
 
         auth= FirebaseAuth.getInstance();
 
         user = auth.getCurrentUser();
     }
 
-    public void open_perfil(View v)
-    {
-        Intent i = new Intent(this , AcedePerfil.class);
-        startActivity(i);
-    }
-
-
-
-    public void signout (View v)
+    public void signout_pt (View v)
     {
         auth.signOut();
         finish();
-        Intent i = new Intent(this , MainActivity.class);
+        Intent i = new Intent(this , PtLogin.class);
         startActivity(i);
     }
 }

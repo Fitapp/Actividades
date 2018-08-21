@@ -26,7 +26,7 @@ public class EsqueceuPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_esqueceu_password);
 
-        EmailPassword = (EditText) findViewById(R.id.email_space);
+        EmailPassword = (EditText) findViewById(R.id.email_esqueceu_password);
         RecuperarPassbutton = (Button) findViewById(R.id.RecuperarPass_button);
 
         firebaseAuth = FirebaseAuth.getInstance();

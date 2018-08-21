@@ -2,20 +2,23 @@ package com.example.valen.fitapp;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.valen.fitapp.api.ClienteLogin;
 import com.example.valen.fitapp.app.EsqueceuPassword;
 import com.example.valen.fitapp.app.ProfileActivity;
+import com.example.valen.fitapp.app.PtMenu;
 import com.example.valen.fitapp.app.Registo;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -31,6 +34,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -40,13 +48,17 @@ public class MainActivity extends AppCompatActivity {
     private Button loginbuton,registerbutton;
     ProgressBar progressbutton;
     private EditText et_email, et_password;
-    private String email, password ;
+    private String email, password , d_login ;
     private LoginButton loginfbbutton;
     private TextView esqueceupassword;
+
+    private DatabaseReference referencia_raiz;
 
     private FirebaseAuth auth;
     private FirebaseUser user;
     CallbackManager callbackManager;
+
+
 
 
     @SuppressLint("WrongViewCast")
@@ -69,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+
+
+
+
         if (user == null)
         {
             //setContentView(R.layout.activity_main);
@@ -83,9 +99,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         }
-        }
-
-
+    }
 
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -113,6 +127,20 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void openartivity_menuPT(View v)
+    {
+        Intent intent = new Intent(this , PtMenu.class);
+        startActivity(intent);
+    }
+
+    public void openactivity_PassaLogion()
+    {
+        auth.signOut();
+        finish();
+        startActivity(new Intent(MainActivity.this, PassaLogin.class));
+        //Toast.makeText(getApplicationContext(), "Email não registado" , Toast.LENGTH_SHORT).show();
+    }
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
@@ -120,12 +148,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void Login(View v){
         intialize();
+
         if (!validate()){
             Toast.makeText(this, "Erro no Login", Toast.LENGTH_SHORT).show();
         }
-        else {
+        else
             faz_login();
-        }
+
+
+
+
     }
 
     public boolean validate() {
@@ -151,23 +183,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void faz_login()
     {
+        Log.d("ARROZ " , "FAZ_LOGIN");
         auth.signInWithEmailAndPassword(email ,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>()
-        {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task)
-            {
-                if (task.isSuccessful())
                 {
-                    Toast.makeText(getApplicationContext(), "Login executado com sucesso" , Toast.LENGTH_SHORT).show();
-                    finish();
-                    Intent i = new Intent(getApplicationContext() , ProfileActivity.class);
-                    startActivity(i);
-                }
-                else
-                    Toast.makeText(getApplicationContext(), "Não conseguiu fazer log in" , Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        if (task.isSuccessful())
+                        {
+                             //Toast.makeText(getApplicationContext(), "Login executado com sucesso" , Toast.LENGTH_SHORT).show();
+                            // finish();
+                            CheckMaildeVerificacao();
+                            }
+
+                        else
+                            Toast.makeText(getApplicationContext(), "Não conseguiu fazer login" , Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
@@ -228,7 +261,52 @@ public class MainActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode , resultCode ,data);
         super.onActivityResult(requestCode, resultCode, data);
     }
+    public void CheckMaildeVerificacao() {
+        FirebaseUser firebaseUser = auth.getInstance().getCurrentUser();
+        Boolean emailflag = firebaseUser.isEmailVerified();
+
+        referencia_raiz = FirebaseDatabase.getInstance().getReference().child("Utilizadores").child("Cliente").child(firebaseUser.getUid());
+
+        referencia_raiz.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                /*String teste = dataSnapshot.child("mail").getValue().toString();
+                Log.d("Teste" , "O mail")*/
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0)
+                {
+                    Toast.makeText(getApplicationContext(), "" , Toast.LENGTH_SHORT).show();
+                    }
+                else {
+                    openactivity_PassaLogion();
+                }
+
+                }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+            }
+        });
 
 
 
-}
+
+        Log.d("Onde para ", "Antes do decide " + emailflag);
+
+
+
+        if (emailflag)
+        {
+            finish();
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+        }
+
+            else {
+            finish();
+            Toast.makeText(this, "Verifique o Email!", Toast.LENGTH_SHORT).show();
+            auth.signOut();
+            }
+
+    }
+    }
